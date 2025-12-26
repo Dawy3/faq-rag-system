@@ -8,7 +8,7 @@ class AppConfig:
     BASE_URL = "https://openrouter.ai/api/v1"
     MODEL_NAME = os.getenv("MODEL_NAME", "openai/gpt-4o-mini")
     INDEX_NAME = "faq-rag-prod"
-    EMBEDDING_MDOEL = "sentence-transformeres/all-MiniLM-L6-v2"
+    EMBEDDING_MDOEL = "sentence-transformers/all-MiniLM-L6-v2"
     
 config = AppConfig()
 

@@ -14,5 +14,5 @@ class QueryRespnose(BaseModel):
     original_query: str
     rewritten_query: str
     answer : str
-    source: List[SourceInfo]
+    sources: List[SourceInfo]
     status : str # 'answered' or 'no_context'

@@ -33,7 +33,7 @@ async def upload_documents(file: UploadFile = File(...)):
         return{
             "status" :"success",
             "filename" : file.filename,
-            "chunk_indexed": count
+            "chunks_indexed": count
         }
         
     except Exception as e:
@@ -44,4 +44,41 @@ async def upload_documents(file: UploadFile = File(...)):
         if os.path.exists(tmp_path):
             os.unlink(tmp_path)
         
+    
+@router.post("/query", response_model=QueryRespnose)
+async def query_faq(request: QueryRequest):
+    """Answer user question based on indexed FAQs"""
+    try:
+        # Initial state
+        initial_state = {
+            "messages": [HumanMessage(request.query)],
+            "documents" : [],
+            "query" : request.query,
+            "rewritten_query" : "",
+            "answer": "",
+            "generation_status": "pending"
+        }
+        
+        result = await rag_graph.ainvoke(initial_state)
+        
+        # Format sources
+        sources = [
+            SourceInfo(
+                content = doc.page_content[:200] + "...",
+                filename= doc.metadata.get("filename", "unknown")
+            )
+            for doc in result.get("documents", [])
+        ]
+        
+        return QueryRespnose(
+            original_query= request.query,
+            rewritten_query = result.get("rewritten_query", ""),
+            answer = result["answer"],
+            sources= sources,
+            status= "answered" if result["generation_status"] == "go" else "no_context"
+        )
+    except Exception as e:
+        logger.error(f"Query processing failed: {e}")
+        raise HTTPException(status_code=500, detail= str(e))
+    
     
