@@ -77,5 +77,3 @@ pytest tests/
 * `POST /api/v1/document/upload`: Upload a PDF to index it into the FAQ knowledge base.
 * `POST /api/v1/query`: Ask a question based on the uploaded documents.
 * `GET /docs`: Interactive Swagger documentation.
-
-```
